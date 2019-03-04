@@ -1,0 +1,43 @@
+{
+  "name": "learnchinese",
+  "version": "1.0.1",
+  "keywords": [
+    "learning",
+    "chinese",
+    "mandarin",
+    "quiz",
+    "hsk",
+    "hanzi"
+  ],
+  "description": "learn chinese(mandarin) by flashcards and quiz in your terminal.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EsrefDurna/learnchinese.git"
+  },
+  "author": "Ash (Esref)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EsrefDurna/learnchinese/issues"
+  },
+  "homepage": "https://github.com/EsrefDurna/learnchinese#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^2.19.0",
+    "dotenv": "^6.2.0",
+    "figlet": "^1.2.1",
+    "inquirer": "^6.2.2"
+  },
+  "bin": {
+    "learnchinese": "index.js"
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}
