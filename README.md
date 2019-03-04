@@ -6,4 +6,4 @@ it will be published as npm module and will be run in terminal.
 $npm install -g learnchinese
 $learnchinese
 
-![learnchinese]('img/sample.png')
+![learnchinese](img/sample.png)
