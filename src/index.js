@@ -127,7 +127,7 @@ async function game(counter = 10000, callback = null) {
     answer.choice = parseInt(answer.choice, 10);
     if (answer.choice === quiz.question.key) {
       const ans = arr[answer.choice];
-      success(`${margin()}${ans.chinese}  - ${ans.pinyin}`);
+      success(`${margin()}${ans.chinese}  , ${ans.pinyin}`);
       success(`${margin()}${ans.eng}`);
       setupObject(quiz.question.key);
       arr[quiz.question.key].rate += 1;
