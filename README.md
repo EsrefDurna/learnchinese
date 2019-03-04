@@ -17,7 +17,7 @@ $learnchinese --quiz
 you can reset it by 
 $learnchinese --reset
 
-#Help
+# Help
 $learnchinese --help
 
 ![learnchinese](img/sample.png)
