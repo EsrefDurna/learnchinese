@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-require('dotenv').config();
 const program = require('commander');
 const fs = require('fs');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const figlet = require('figlet');
 const { MostCommon } = require('../data/mostcommon');
-const { readJSONFile, writeJSONToFile } = require('./filesystem');
+const { readJSONFile, writeJSONToFile, getFilePathName } = require('./filesystem');
 const {
   emptyline,
   success,
@@ -14,7 +13,8 @@ const {
 } = require('./utils');
 const arr = [];
 function dataFilePath() {
-  return '../data/data.json';
+  const path = getFilePathName('../data/data.json');
+  return path;
 }
 function margin() {
   return '     ';
@@ -30,9 +30,7 @@ function loadQuestions() {
   for (const key in data) {
     MostCommon[key].chinese = key;
     arr.push(MostCommon[key]);
-    if (arr[arr.length - 1].rate === undefined) {
-      arr[arr.length - 1].rate = arr.length - 1;
-    }
+    setupObject(arr.length - 1);
   }
 }
 function saveProgress() {
@@ -112,11 +110,23 @@ function nextquestion() {
 }
 function setupObject(index) {
   if (arr[index].rate === undefined) {
-    arr[index].rate = 0;
+    arr[index].rate = index;
   }
   if (arr[index].learnrate === undefined) {
-    arr[index].learnrate = 0;
+    arr[index].learnrate = index;
   }
+  if (arr[index].index === undefined) {
+    arr[index].index = index;
+  }
+}
+function getLevent() {
+  let max = -1;
+  for (let i = 0; i < 10; i += 1) {
+    if ((arr[i].index / 10) > max) {
+      max = (arr[i].index / 10);
+    }
+  }
+  return parseInt(max, 10);
 }
 async function game(counter = 10000, callback = null) {
   let quiz = nextquestion();
@@ -154,12 +164,23 @@ async function game(counter = 10000, callback = null) {
   }
 }
 function learnTime() {
+  // if (process.env.NODE_ENV === 'dev') {
+  //   return 500;
+  // }
   if (program.time) {
     return parseInt(program.time * 1000, 10);
   }
   return process.env.time || 5000;
 }
+let lastlearnLevel = -1;
 async function startLearning(counter = 10000, callback = null, lastIndex = 0) {
+  if ((counter % 10) === 0) {
+    const level = getLevent();
+    if (level > lastlearnLevel && level > 0) {
+      lastlearnLevel = level;
+      success(`Congratilations now you are Level ${lastlearnLevel}`);
+    }
+  }
   counter -= 1;
   if (counter < 0) {
     if (callback) {
@@ -178,32 +199,42 @@ async function startLearning(counter = 10000, callback = null, lastIndex = 0) {
     console.log(`${margin()}${learn.chinese} , ${learn.pinyin}`);
     console.log(`${margin()}${learn.eng}`);
   }, learnTime() / 2);
-  setTimeout(() => startLearning(counter, callback), learnTime(), rnd);
+  setTimeout(() => startLearning(counter, callback, rnd), learnTime());
+}
+function getSaveTime() {
+  // if (process.env.NODE_ENV === 'dev') {
+  //   return 10000;
+  // }
+  return process.env.saveTime || 60000;
 }
 async function run() {
-  program
-    .version('0.1.0')
-    .option('-q, --quiz [quiz]', 'Start Quiz', false)
-    .option('-l, --learn [learn]', 'Learn', false)
-    .option('-m, --mixed [mixed]', 'mixed mode teaches you 10 words then quiz', false)
-    .option('-t, --time [time]', 'Change Learning Card Repeat interval in Second', 5)
-    .option('-c, --character [character]', 'Set how many characters want default 300', 300)
-    .option('-r, --reset [reset]', 'Delete user progress data', false)
-    .parse(process.argv);
-  if (program.reset) {
-    fs.unlinkSync('./data/data.json');
-    success('data file has been deleted');
-    process.exit();
-  }
-  showWelcome();
-  setInterval(saveProgress, process.env.saveTime || 60000);
-  loadQuestions();
-  if (program.quiz) {
-    game();
-  } else if (program.learn) {
-    startLearning();
-  } else {
-    game(5, startLearning);
+  try {
+    program
+      .version('0.1.0')
+      .option('-q, --quiz [quiz]', 'Start Quiz', false)
+      .option('-l, --learn [learn]', 'Learn', false)
+      .option('-m, --mixed [mixed]', 'mixed mode teaches you 10 words then quiz', true)
+      .option('-t, --time [time]', 'Change Learning Card Repeat interval in Second', 5)
+      .option('-c, --character [character]', 'Set how many characters want default 300', 300)
+      .option('-r, --reset [reset]', 'Delete user progress data', false)
+      .parse(process.argv);
+    if (program.reset) {
+      fs.unlinkSync(dataFilePath());
+      success('data file has been deleted');
+      process.exit();
+    }
+    showWelcome();
+    setInterval(saveProgress, getSaveTime());
+    loadQuestions();
+    if (program.quiz) {
+      game();
+    } else if (program.learn) {
+      startLearning();
+    } else {
+      game(5, startLearning);
+    }
+  } catch (err) {
+    console.error(err.message);
   }
 }
 run();

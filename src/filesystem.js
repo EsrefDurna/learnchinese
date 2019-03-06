@@ -33,8 +33,8 @@ function writeTextToFile(filename, data, pathName = []) {
 }
 function writeJSONToFile(filename, data, pathName = []) {
   try {
-    const fullFilePath = getFilePathName(filename, pathName);
-    fs.writeFileSync(fullFilePath, JSON.stringify(data, null, 4));
+    // const fullFilePath = getFilePathName(filename, pathName);
+    fs.writeFileSync(filename, JSON.stringify(data, null, 4));
   } catch (err) {
     console.error(err.message);
     return false;
