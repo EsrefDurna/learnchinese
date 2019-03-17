@@ -164,9 +164,6 @@ async function game(counter = 10000, callback = null) {
   }
 }
 function learnTime() {
-  // if (process.env.NODE_ENV === 'dev') {
-  //   return 500;
-  // }
   if (program.time) {
     return parseInt(program.time * 1000, 10);
   }
@@ -214,7 +211,7 @@ async function run() {
       .option('-q, --quiz [quiz]', 'Start Quiz', false)
       .option('-l, --learn [learn]', 'Learn', false)
       .option('-m, --mixed [mixed]', 'mixed mode teaches you 10 words then quiz', true)
-      .option('-t, --time [time]', 'Change Learning Card Repeat interval in Second', 5)
+      .option('-t, --time [time]', 'Change Learning Card Repeat interval in Second', 2)
       .option('-c, --character [character]', 'Set how many characters want default 300', 300)
       .option('-r, --reset [reset]', 'Delete user progress data', false)
       .parse(process.argv);
